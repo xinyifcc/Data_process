@@ -1,9 +1,9 @@
 # Data_process
 ### Release Notes
-* 01/04/17 First-Edition : 通过['检查结论'],设置规则,按月将数据分为positive和negative; CHECKED :+1:
-* 01/06/17 Second-Edition : 添加['病人来源'],创建pos和neg文件夹,按照来源再次细分数据;	CHECKED :+1:
-* 01/06/17 Third-Edition : 将按月份/有病没病/病人来源细分的数据与CT图片链接,创建分类文件夹,并将图片按类别复制至新的文件夹.(	Code not been implement!!) UNCHECKED
-* 01/10/17 Third-Edition Checked
+* 01/04/17 First-Edition
+* 01/06/17 Second-Edition
+* 01/06/17 Third-Edition 
+* 01/10/17 Third-Edition
 * 01/12/17 ADD img_mean.py : Resize the image first and then get their means
 * 01/12/17 gen_xml.py : Change the inital .jpg file into .xml file, also random the bbox location for making normal.
 More updates later
@@ -45,7 +45,7 @@ And here's main_function code! :+1:
 ```javascript
 def main():
     path = './'
-    df = readData(path + 'filename', ['检查编号','检查结论'])
+    df = readData(path + 'filename', ['x','y'])
     pos, neg = processData(df)
     pos.to_csv(path + 'filename', sep='\t')
     neg.to_csv(path + 'filename', sep='\t')    
@@ -55,7 +55,7 @@ def main():
 #读取数据,只需修改path(path内根目录应有month目录):
 def processData(month):
     path = './Dec/'
-    df = readData('{0}cz_data_{1}.xls'.format(path, month), ['检查编号','检查结论','病人来源'])
+    df = readData('{0}cz_data_{1}.xls'.format(path, month), ['x','y','z'])
     
 #分别创建pos和neg的文件夹:
     if not os.path.exists(path + 'pos/'):

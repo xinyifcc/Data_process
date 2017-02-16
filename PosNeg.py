@@ -7,7 +7,7 @@ import shutil
 
 
 def isKeywordsIn(li):
-    kwList = ['侧弯', '骨折', '粘连', '增厚']
+    kwList = ['a', 'b', 'c', 'd']
     for each in kwList:
         if each in li:
             return True
@@ -16,7 +16,7 @@ def isKeywordsIn(li):
 
 def rule(x):
     for L in x:
-        if '未见明显异常' not in L or isKeywordsIn(L):
+        if 'A' not in L or isKeywordsIn(L):
             return False
     return True
 
@@ -42,10 +42,10 @@ def copyFiles(files, to_dir):
 def processData(month):
     path = './data_all/{}'.format(month)
     imgPath = './img'
-    df = readData('{0}/cz_data_{1}.xls'.format(path, month), ['检查编号','检查结论','病人来源'])
-    df['c'] = df['检查结论'].apply(lambda x: [item.strip() for item in x.split()])
-    df['检查结论'] = df['c'].apply(lambda x: ' '.join(x))
-    sourceList = list(set(df['病人来源']))
+    df = readData('{0}/cz_data_{1}.xls'.format(path, month), ['1','2','3'])
+    df['c'] = df['1'].apply(lambda x: [item.strip() for item in x.split()])
+    df['1'] = df['c'].apply(lambda x: ' '.join(x))
+    sourceList = list(set(df['3']))
     criterion = df['c'].map(rule)
 
     for d in ['pos', 'neg']:
@@ -56,15 +56,15 @@ def processData(month):
             makeDir('/'.join([imgPath, '..', month, d, py.get(src, format='strip')]))
 
     for src in sourceList:
-        sdf = df[df['病人来源'] == src] 
+        sdf = df[df['3'] == src] 
         pos = sdf[~criterion].drop('c', axis=1)
         neg = sdf[criterion].drop('c', axis=1)
         srcName = py.get_initial(src, '')
         pos.to_csv('{0}/pos/{1}_pos_{2}.tsv'.format(path, month, srcName), sep='\t', index=False)
         neg.to_csv('{0}/neg/{1}_neg_{2}.tsv'.format(path, month, srcName), sep='\t', index=False)
 
-        posPicNameList = [''.join([imgPath, '/', x, '.jpg']) for x in pos['检查编号'].tolist()]
-        negPicNameList = [''.join([imgPath, '/', x, '.jpg']) for x in neg['检查编号'].tolist()]
+        posPicNameList = [''.join([imgPath, '/', x, '.jpg']) for x in pos['1'].tolist()]
+        negPicNameList = [''.join([imgPath, '/', x, '.jpg']) for x in neg['1'].tolist()]
 
         copyFiles(posPicNameList, '/'.join([imgPath, '..', month, 'pos', py.get(src, format='strip')]))
         copyFiles(negPicNameList, '/'.join([imgPath, '..', month, 'neg', py.get(src, format='strip')]))
